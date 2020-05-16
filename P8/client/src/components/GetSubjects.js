@@ -3,85 +3,142 @@ import React, { Component } from "react";
 import axios from "axios";
 import { Container, Label } from "reactstrap";
 
-export default class GetSubjects extends Component {
-  constructor(props) {
-    super(props);
-    this.getsubjects = this.getsubjects.bind(this);
-    this.onSearch = this.onSearch.bind(this);
+class GetSubjects extends Component {
+  constructor() {
+
+    super()
+
     this.state = {
-      keyword: "",
-      data: { subjects: [] }
-    };
-  }
-  getsubjects(e) {
-    this.setState({ keyword: e.target.value });
-  }
-  onSearch(e) {
-    e.preventDefault();
-    const searchsub = {
-      keyword: this.state.keyword
-    };
-    console.log(this.state.keyword);
-    axios
-      .get(`http://localhost:3000/api/messages/courses/${this.state.keyword}`)
-      /*
-      .then(response => {
-        console.log(response);
-        this.setState({
-          data: response.data
-        });
-      });
-*/
 
-      .then(response => {
-        console.log("RESPONSE");
-        console.log(response);
-        this.setState({
-          data: response.data
-          // --------------------^^^^^^^^^
-        });
-      });
+        courses: [],
 
-    console.log(this.state.keyword);
-    console.log(this.state.data);
-    // this.setState({
-    // keyword: ""
-    //});
-  }
-  componentDidMount() {}
+        subjects: []
 
-  render() {
-    const course = this.state.data;
-    //console.log(course);
-    //console.log("COURSE");
-    //console.log(course.subjects);
-    console.log("STRING");
-    console.log(course.subjects.toString());
-    //console.log("COURSE");
-    //console.log(course);
-    return (
-      <div>
-        <br />
-        <Container>
-          <div>
-            <label>Course Name</label>{" "}
-            <input
-              placeholder="Enter Course Name"
-              type="text"
-              value={this.state.keyword}
-              onChange={this.getsubjects}
-              name="keyword"
-              required
-            />{" "}
-            <button className="btn btn-primary" onClick={this.onSearch}>
-              Get Subjects
-            </button>
-          </div>
-          <br />
+    }
 
-          <ul> {course.subjects.join(", ")}</ul>
-        </Container>
-      </div>
-    );
-  }
+    this.viewSubjects = this.viewSubjects.bind(this);
+
+    this.calculate= this.calculate.bind(this);
+
 }
+
+
+
+componentDidMount() {
+
+    axios.get('http://localhost:5000/course').then(
+
+        data => {
+
+            this.setState({
+
+                courses: data.data
+
+            });
+
+        }
+
+    )
+
+}
+
+
+
+viewSubjects(sub){
+
+   axios.get('http://localhost:5000/subject/find/'+sub).then(
+
+       data => {
+
+           alert('Name Of Subject is :' + data.data['name'] + ' And Amount Rs : ' + data.data['amount']);
+
+       }
+
+   )
+
+}
+
+
+
+calculate(id){
+
+    axios.get('http://localhost:8085/course/calculate/'+id).then(
+
+        data => {
+
+            alert('Cost : ' + data);
+
+        }
+
+    )
+
+}
+
+render() {
+
+    return (
+
+        <div className="container">
+
+            <table className="table">
+
+                <thead>
+
+                    <th>Name</th>
+
+                    <th>Code</th>
+
+                    <th>Pass Mark</th>
+
+                    <th>Lecure In Charge</th>
+
+                    <th>Subject</th>
+
+                </thead>
+
+                <tbody>
+
+                    {
+
+                        this.state.courses.map(cou => {
+
+                            return (
+
+                                <tr key={cou._id}>
+
+                                    <td>{cou.name}</td>
+
+                                    <td>{cou.code}</td>
+
+                                    <td>{cou.passmark}</td>
+
+                                    <td>{cou.lectureIncharge}</td>
+
+                                    <td><button onClick={this.viewSubjects.bind(this,cou.subject)}>View Subject Info</button></td>
+
+                                    <td><button onClick={this.calculate.bind(this,cou.subject)}>Cost</button></td>
+
+                                </tr>
+
+                            )
+
+                        })
+
+                    }
+
+                </tbody>
+
+            </table>
+
+
+
+        </div>
+
+
+
+    )
+
+}
+
+}
+export default GetSubjects

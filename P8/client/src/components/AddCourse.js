@@ -11,142 +11,244 @@ import {
   FormText,
   Container
 } from "reactstrap";
-export default class AddCourse extends Component {
-  constructor(props) {
-    super(props);
 
-    this.updatename = this.updatename.bind(this);
-    this.updatecode = this.updatecode.bind(this);
-    this.updatepassmark = this.updatepassmark.bind(this);
-    this.updatelectureIncharge = this.updatelectureIncharge.bind(this);
-    this.updatesubjects = this.updatesubjects.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+class AddCourse extends Component {
+  constructor() {
+    super();
 
     this.state = {
       name: "",
       code: "",
       passmark: "",
       lectureIncharge: "",
-      subjects: ""
+      subjects: [],
+      subject: ''
     };
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  updatecode(e) {
-    this.setState({ code: e.target.value });
-  }
-
-  updatename(e) {
-    this.setState({ name: e.target.value });
-  }
-  updatepassmark(e) {
-    this.setState({ passmark: e.target.value });
-  }
-  updatelectureIncharge(e) {
-    this.setState({ lectureIncharge: e.target.value });
-  }
-  updatesubjects(e) {
-    this.setState({ subjects: e.target.value });
-  }
-
-  onSubmit(e) {
-    e.preventDefault();
-
-    let strvale = this.state.subjects;
-    let arr = strvale.split(",");
-    const meo = {
-      name: this.state.name,
-      code: this.state.code,
-      passmark: this.state.passmark,
-      lectureIncharge: this.state.lectureIncharge,
-      subjects: arr
-    };
-    axios
-      .post("http://localhost:3000/api/messages/courses/add", meo)
-      .then(res => console.log(res.data));
+  handleInputChange(e) {
 
     this.setState({
-      name: "",
-      code: "",
-      passmark: "",
-      lectureIncharge: "",
 
-      subjects: ""
+        [e.target.name]: e.target.value
+
     });
-  }
 
-  render() {
-    return (
-      <div>
-        <br />
-        <Container>
-          <Form onSubmit={this.onSubmit}>
-            <Label>
-              <strong>
-                <font size="4">Add Course Details</font>
-              </strong>
-            </Label>
-            <FormGroup>
-              <Label htmlFor="validationTooltip01">Name</Label>
-              <Input
-                placeholder="Enter Course Name"
-                type="text"
-                name="name"
-                value={this.state.name}
-                onChange={this.updatename}
-                required
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label htmlFor="validationTooltip01">Code</Label>
-              <Input
-                placeholder="Enter Course Code"
-                type="text"
-                name="code"
-                value={this.state.code}
-                onChange={this.updatecode}
-                required
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label htmlFor="validationTooltip02">Pass Mark</Label>
-              <Input
-                placeholder="Enter Course Pass Mark"
-                type="text"
-                name="passmark"
-                value={this.state.passmark}
-                onChange={this.updatepassmark}
-                required
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label htmlFor="validationTooltip02">Lecturer in Charge</Label>
-              <Input
-                placeholder="Enter Course Lecturer in Charge"
-                type="text"
-                name="passmark"
-                value={this.state.lectureIncharge}
-                onChange={this.updatelectureIncharge}
-                required
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label htmlFor="validationTooltip03">Subjects</Label>
-              <Input
-                placeholder="Enter Course Subjects Separated by , s"
-                type="text"
-                name="subjects"
-                value={this.state.subjects}
-                onChange={this.updatesubjects}
-                required
-              />
-            </FormGroup>
-
-            <Button className="btn btn-success" type="submit">
-              Add Course
-            </Button>
-          </Form>
-        </Container>
-      </div>
-    );
-  }
 }
+
+
+
+handleSubmit(e) {
+
+    e.preventDefault();
+
+    const obj = {
+
+        name: this.state.name,
+
+        code: this.state.code,
+
+        passMark: this.state.passMark,
+
+        lectureInCharge: this.state.lectureInCharge,
+
+        subject: this.state.subject
+
+    }
+
+    axios.post('http://localhost:5000/course/insert',obj).then(
+
+        data => {
+
+            alert('Successfull' + JSON.stringify(data.data));
+
+        }
+
+    )
+
+    this.setState({
+
+        name: '',
+
+        code: '',
+
+        passMark: '',
+
+        lectureInCharge: '',
+
+        subjects: [],
+
+        subject: ''
+
+    })
+
+}
+
+
+
+componentDidMount(){
+
+    axios.get('http://localhost:5000/subject').then(
+
+        data => {
+
+            this.setState({
+
+                subjects: data.data
+
+            })
+
+        }
+
+    )
+
+}
+
+render() {
+
+  return (
+
+      <div className="container">
+
+          <form className="form" onSubmit={this.handleSubmit}>
+
+              <div className="form-group">
+
+                  <label>Name</label>
+
+                  <input
+
+                      type="text"
+
+                      name="name"
+
+                      className="form-control"
+
+                      onChange={this.handleInputChange}
+
+                      value={this.state.name}
+
+                  />
+
+              </div>
+
+              <div className="form-group">
+
+                  <label>Code</label>
+
+                  <input
+
+                      type="text"
+
+                      name="code"
+
+                      className="form-control"
+
+                      onChange={this.handleInputChange}
+
+                      value={this.state.code}
+
+                  />
+
+              </div>
+
+              <div className="form-group">
+
+                  <label>Pass Mark</label>
+
+                  <input
+
+                      type="text"
+
+                      name="passMark"
+
+                      className="form-control"
+
+                      onChange={this.handleInputChange}
+
+                      value={this.state.passMark}
+
+                  />
+
+              </div>
+
+              <div className="form-group">
+
+                  <label>Lecture In Charge</label>
+
+                  <input
+
+                      type="text"
+
+                      name="lectureInCharge"
+
+                      className="form-control"
+
+                      onChange={this.handleInputChange}
+
+                      value={this.state.lectureInCharge}
+
+                  />
+
+              </div>
+
+              <div className="form-group">
+
+                  <label>Lecture In Charge</label>
+
+                  <select
+
+                      name="subject"
+
+                      className="form-control"
+
+                      onChange={this.handleInputChange}
+
+                      value={this.state.subject}
+
+                  >
+
+                      {
+
+                          this.state.subjects.map(sub => {
+
+                              return (
+
+                                  <option key={sub._id} value={sub._id}>{sub.name}</option>
+
+                              )
+
+                          })
+
+                      }
+
+                  </select>
+
+              </div>
+
+              <div className="form-group">
+
+                  <input
+
+                      type="submit"
+
+                      name="lectureInCharge"
+
+                      value="Submit"
+
+                  />
+
+              </div>
+
+          </form>
+
+      </div>
+
+  )
+
+}
+
+}
+export default AddCourse

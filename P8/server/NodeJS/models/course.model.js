@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Subject = require('./subject.model');
 
 let Course = new Schema({
   name: {
@@ -16,9 +17,13 @@ let Course = new Schema({
   lectureIncharge: {
     type: String
   },
-  subjects: {
-    type: Array
-  }
+  subject: [{
+
+    type: Schema.Types.ObjectId,
+
+    ref: 'Subject'
+
+}]
 });
 
 module.exports = mongoose.model("Course", Course);
